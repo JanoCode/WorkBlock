@@ -14,6 +14,7 @@ namespace WorkBlock
 
         private bool estaPausado;
         private bool mantenerEncima;
+        private bool estaEnDescanso;
 
         public MainWindow()
         {
@@ -50,7 +51,9 @@ namespace WorkBlock
 
             duracionSeleccionada = minutos * 60;
             segundosRestantes = duracionSeleccionada;
+
             estaPausado = false;
+            estaEnDescanso = false;
 
             StartButton.Content = "▶  Iniciar";
 
