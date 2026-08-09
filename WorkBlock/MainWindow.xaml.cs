@@ -1,7 +1,10 @@
-﻿using System;
+using System;
+using System.Drawing;
+using System.Media;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Forms = global::System.Windows.Forms;
 
 namespace WorkBlock
 {
@@ -10,6 +13,7 @@ namespace WorkBlock
         private const int DuracionDescanso = 15 * 60;
 
         private readonly DispatcherTimer timer;
+        private readonly Forms.NotifyIcon notifyIcon;
 
         private int segundosRestantes = 30 * 60;
         private int duracionSeleccionada = 30 * 60;
@@ -28,6 +32,13 @@ namespace WorkBlock
             };
 
             timer.Tick += Timer_Tick;
+
+            notifyIcon = new Forms.NotifyIcon
+            {
+                Icon = SystemIcons.Application,
+                Visible = true,
+                Text = "WorkBlock"
+            };
 
             ActualizarEstadoVisual();
         }
@@ -123,12 +134,12 @@ namespace WorkBlock
                 estaEnDescanso = false;
                 segundosRestantes = duracionSeleccionada;
 
-                ActualizarEstadoVisual();
+                ReproducirAviso();
+                MostrarNotificacion(
+                    "Descanso terminado",
+                    "El descanso termino. Puedes comenzar un nuevo bloque.");
 
-                MessageBox.Show(
-                    "El descanso termino. Listo para volver al trabajo.",
-                    "WorkBlock"
-                );
+                ActualizarEstadoVisual();
 
                 return;
             }
@@ -136,12 +147,12 @@ namespace WorkBlock
             estaEnDescanso = true;
             segundosRestantes = DuracionDescanso;
 
-            ActualizarEstadoVisual();
+            ReproducirAviso();
+            MostrarNotificacion(
+                "Bloque terminado",
+                "El bloque de trabajo termino. Es momento de descansar.");
 
-            MessageBox.Show(
-                "¡Bloque de trabajo terminado!\n\nPresiona Iniciar descanso para comenzar tus 15 minutos.",
-                "WorkBlock"
-            );
+            ActualizarEstadoVisual();
         }
 
         private void ActualizarTemporizador()
@@ -155,9 +166,25 @@ namespace WorkBlock
         private void ActualizarEstadoVisual()
         {
             ModeIndicator.Text = estaEnDescanso ? "●  DESCANSO" : "●  TRABAJO";
+            SkipBreakButton.Visibility = estaEnDescanso ? Visibility.Visible : Visibility.Collapsed;
 
             ActualizarTemporizador();
             ActualizarTextoBotonPrincipal();
+        }
+
+        private void SkipBreakButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!estaEnDescanso)
+            {
+                return;
+            }
+
+            timer.Stop();
+            estaPausado = false;
+            estaEnDescanso = false;
+            segundosRestantes = duracionSeleccionada;
+
+            ActualizarEstadoVisual();
         }
 
         private void ActualizarTextoBotonPrincipal()
@@ -193,6 +220,24 @@ namespace WorkBlock
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            notifyIcon.Dispose();
+            base.OnClosed(e);
+        }
+
+        private static void ReproducirAviso()
+        {
+            SystemSounds.Exclamation.Play();
+        }
+
+        private void MostrarNotificacion(string titulo, string mensaje)
+        {
+            notifyIcon.BalloonTipTitle = titulo;
+            notifyIcon.BalloonTipText = mensaje;
+            notifyIcon.ShowBalloonTip(3000);
         }
 
         private void TitleBar_MouseLeftButtonDown(

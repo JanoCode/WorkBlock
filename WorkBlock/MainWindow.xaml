@@ -277,6 +277,15 @@
 
                     </Grid>
 
+                    <Button
+                        x:Name="SkipBreakButton"
+                        Content="Omitir descanso"
+                        Height="42"
+                        Margin="0,12,0,0"
+                        Style="{StaticResource SecondaryButton}"
+                        Click="SkipBreakButton_Click"
+                        Visibility="Collapsed"/>
+
                 </StackPanel>
 
             </Grid>
