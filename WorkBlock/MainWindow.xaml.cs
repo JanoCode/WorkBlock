@@ -250,17 +250,9 @@ namespace WorkBlock
             AppNotification notification = new AppNotificationBuilder()
                 .AddText(titulo)
                 .AddText(mensaje)
-                .SetAppLogoOverride(CrearUriIconoAplicacion())
                 .BuildNotification();
 
             AppNotificationManager.Default.Show(notification);
-        }
-
-        private static Uri CrearUriIconoAplicacion()
-        {
-            string rutaIcono = Path.Combine(AppContext.BaseDirectory, "Assets", "WorkBlock.ico");
-
-            return new Uri(rutaIcono);
         }
 
         private void TitleBar_MouseLeftButtonDown(
