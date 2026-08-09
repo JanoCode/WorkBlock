@@ -6,7 +6,14 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <PlatformTarget>x64</PlatformTarget>
     <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishSingleFile>false</PublishSingleFile>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <PublishTrimmed>false</PublishTrimmed>
     <ApplicationIcon>Assets\WorkBlock.ico</ApplicationIcon>
     <AssemblyTitle>WorkBlock</AssemblyTitle>
     <Product>WorkBlock</Product>
@@ -22,5 +29,30 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.3.1" />
   </ItemGroup>
+
+  <Target Name="IncludeWindowsAppRuntimeInsightsResource"
+          DependsOnTargets="GetWindowsAppSDKNativePlatform"
+          BeforeTargets="AssignTargetPaths"
+          Condition="'$(WindowsAppSDKSelfContained)' == 'true'">
+    <PropertyGroup>
+      <WindowsAppRuntimeMsixPath>$(PkgMicrosoft_WindowsAppSDK_Runtime)\tools\MSIX\win10-$(NativePlatform)\Microsoft.WindowsAppRuntime.2.msix</WindowsAppRuntimeMsixPath>
+      <WindowsAppRuntimeInsightsResourceDll>$(SelfContainedIntermediateOutputPath)WindowsAppRuntime\Microsoft.WindowsAppRuntime.Insights.Resource.dll</WindowsAppRuntimeInsightsResourceDll>
+      <WindowsAppRuntimeInsightsResourceDir>$([System.IO.Path]::GetDirectoryName('$(WindowsAppRuntimeInsightsResourceDll)'))</WindowsAppRuntimeInsightsResourceDir>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(WindowsAppRuntimeInsightsResourceDir)" />
+
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;Add-Type -AssemblyName System.IO.Compression.FileSystem; $zip = [System.IO.Compression.ZipFile]::OpenRead('$(WindowsAppRuntimeMsixPath)'); try { $entry = $zip.GetEntry('Microsoft.WindowsAppRuntime.Insights.Resource.dll'); if ($null -eq $entry) { throw 'Microsoft.WindowsAppRuntime.Insights.Resource.dll was not found in the Windows App SDK runtime package.' }; [System.IO.Compression.ZipFileExtensions]::ExtractToFile($entry, '$(WindowsAppRuntimeInsightsResourceDll)', $true) } finally { $zip.Dispose() }&quot;" />
+
+    <ItemGroup>
+      <None Include="$(WindowsAppRuntimeInsightsResourceDll)"
+            CopyToOutputDirectory="PreserveNewest"
+            Link="Microsoft.WindowsAppRuntime.Insights.Resource.dll" />
+      <ResolvedFileToPublish Include="$(WindowsAppRuntimeInsightsResourceDll)">
+        <RelativePath>Microsoft.WindowsAppRuntime.Insights.Resource.dll</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
 
 </Project>
