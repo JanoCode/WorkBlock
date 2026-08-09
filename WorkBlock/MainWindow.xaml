@@ -196,6 +196,7 @@
                         Margin="0,0,0,28">
 
                         <TextBlock
+                            x:Name="ModeIndicator"
                             Text="●  TRABAJO"
                             Foreground="#92E2D2"
                             FontSize="11"
