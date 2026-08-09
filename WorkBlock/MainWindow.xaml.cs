@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Drawing;
 using System.Media;
 using System.Windows;
@@ -11,6 +12,7 @@ namespace WorkBlock
     public partial class MainWindow : Window
     {
         private const int DuracionDescanso = 15 * 60;
+        private const string NombreAplicacion = "WorkBlock";
 
         private readonly DispatcherTimer timer;
         private readonly Forms.NotifyIcon notifyIcon;
@@ -35,9 +37,9 @@ namespace WorkBlock
 
             notifyIcon = new Forms.NotifyIcon
             {
-                Icon = SystemIcons.Application,
+                Icon = CargarIconoAplicacion(),
                 Visible = true,
-                Text = "WorkBlock"
+                Text = NombreAplicacion
             };
 
             ActualizarEstadoVisual();
@@ -231,6 +233,7 @@ namespace WorkBlock
 
         protected override void OnClosed(EventArgs e)
         {
+            notifyIcon.Icon?.Dispose();
             notifyIcon.Dispose();
             base.OnClosed(e);
         }
@@ -263,6 +266,15 @@ namespace WorkBlock
             notifyIcon.BalloonTipTitle = titulo;
             notifyIcon.BalloonTipText = mensaje;
             notifyIcon.ShowBalloonTip(3000);
+        }
+
+        private static Icon CargarIconoAplicacion()
+        {
+            string rutaIcono = Path.Combine(AppContext.BaseDirectory, "Assets", "WorkBlock.ico");
+
+            return File.Exists(rutaIcono)
+                ? new Icon(rutaIcono)
+                : SystemIcons.Application;
         }
 
         private void TitleBar_MouseLeftButtonDown(

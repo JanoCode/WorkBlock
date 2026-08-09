@@ -7,6 +7,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>Assets\WorkBlock.ico</ApplicationIcon>
+    <AssemblyTitle>WorkBlock</AssemblyTitle>
+    <Product>WorkBlock</Product>
+    <Description>WorkBlock focus timer for Windows.</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\WorkBlock.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
 </Project>
