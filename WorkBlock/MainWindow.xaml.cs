@@ -1,21 +1,19 @@
 using System;
 using System.IO;
-using System.Drawing;
 using System.Media;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Forms = global::System.Windows.Forms;
+using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
 
 namespace WorkBlock
 {
     public partial class MainWindow : Window
     {
         private const int DuracionDescanso = 15 * 60;
-        private const string NombreAplicacion = "WorkBlock";
 
         private readonly DispatcherTimer timer;
-        private readonly Forms.NotifyIcon notifyIcon;
 
         private int segundosRestantes = 30 * 60;
         private int duracionSeleccionada = 30 * 60;
@@ -34,13 +32,6 @@ namespace WorkBlock
             };
 
             timer.Tick += Timer_Tick;
-
-            notifyIcon = new Forms.NotifyIcon
-            {
-                Icon = CargarIconoAplicacion(),
-                Visible = true,
-                Text = NombreAplicacion
-            };
 
             ActualizarEstadoVisual();
         }
@@ -231,13 +222,6 @@ namespace WorkBlock
             Close();
         }
 
-        protected override void OnClosed(EventArgs e)
-        {
-            notifyIcon.Icon?.Dispose();
-            notifyIcon.Dispose();
-            base.OnClosed(e);
-        }
-
         private static void ReproducirAviso()
         {
             SystemSounds.Exclamation.Play();
@@ -263,18 +247,20 @@ namespace WorkBlock
 
         private void MostrarNotificacion(string titulo, string mensaje)
         {
-            notifyIcon.BalloonTipTitle = titulo;
-            notifyIcon.BalloonTipText = mensaje;
-            notifyIcon.ShowBalloonTip(3000);
+            AppNotification notification = new AppNotificationBuilder()
+                .AddText(titulo)
+                .AddText(mensaje)
+                .SetAppLogoOverride(CrearUriIconoAplicacion())
+                .BuildNotification();
+
+            AppNotificationManager.Default.Show(notification);
         }
 
-        private static Icon CargarIconoAplicacion()
+        private static Uri CrearUriIconoAplicacion()
         {
             string rutaIcono = Path.Combine(AppContext.BaseDirectory, "Assets", "WorkBlock.ico");
 
-            return File.Exists(rutaIcono)
-                ? new Icon(rutaIcono)
-                : SystemIcons.Application;
+            return new Uri(rutaIcono);
         }
 
         private void TitleBar_MouseLeftButtonDown(
