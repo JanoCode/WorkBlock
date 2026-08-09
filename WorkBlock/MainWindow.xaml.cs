@@ -73,8 +73,15 @@ namespace WorkBlock
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            bool iniciaNuevoBloque = !timer.IsEnabled && !estaPausado;
+
             timer.Start();
             estaPausado = false;
+
+            if (iniciaNuevoBloque)
+            {
+                NotificarInicioBloque();
+            }
 
             ActualizarTextoBotonPrincipal();
         }
@@ -231,6 +238,24 @@ namespace WorkBlock
         private static void ReproducirAviso()
         {
             SystemSounds.Exclamation.Play();
+        }
+
+        private void NotificarInicioBloque()
+        {
+            ReproducirAviso();
+
+            if (estaEnDescanso)
+            {
+                MostrarNotificacion(
+                    "Descanso iniciado",
+                    "Tienes 15 minutos para descansar.");
+
+                return;
+            }
+
+            MostrarNotificacion(
+                "Bloque de trabajo iniciado",
+                $"{duracionSeleccionada / 60} minutos de enfoque. ¡A trabajar!");
         }
 
         private void MostrarNotificacion(string titulo, string mensaje)
