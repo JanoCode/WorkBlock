@@ -229,8 +229,6 @@ namespace WorkBlock
 
         private void NotificarInicioBloque()
         {
-            ReproducirAviso();
-
             if (estaEnDescanso)
             {
                 MostrarNotificacion(
