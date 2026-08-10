@@ -3,7 +3,7 @@
 ; Non-commercial use only
 
 #define MyAppName "WorkBlock"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "JanoCode"
 #define MyAppExeName "WorkBlock.exe"
 
@@ -41,8 +41,8 @@ Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\Aleja\OneDrive\Escritorio\Proyectos\WorkBlock\WorkBlock\WorkBlock\bin\Release\net10.0-windows10.0.19041.0\win-x64\publish\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Aleja\OneDrive\Escritorio\Proyectos\WorkBlock\WorkBlock\WorkBlock\bin\Release\net10.0-windows10.0.19041.0\win-x64\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\Aleja\OneDrive\Escritorio\WorkBlock\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Aleja\OneDrive\Escritorio\WorkBlock\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
