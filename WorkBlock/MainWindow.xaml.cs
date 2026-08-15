@@ -1,8 +1,7 @@
 using System;
-using System.IO;
-using System.Media;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
@@ -14,6 +13,7 @@ namespace WorkBlock
         private const int DuracionDescanso = 15 * 60;
 
         private readonly DispatcherTimer timer;
+        private readonly MediaPlayer reproductorAudio;
 
         private int segundosRestantes = 30 * 60;
         private int duracionSeleccionada = 30 * 60;
@@ -30,6 +30,9 @@ namespace WorkBlock
             {
                 Interval = TimeSpan.FromSeconds(1)
             };
+
+            reproductorAudio = new MediaPlayer();
+            reproductorAudio.Open(new Uri("Assets/WorkBlock_Sonido_Inicio.mp3", UriKind.Relative));
 
             timer.Tick += Timer_Tick;
 
@@ -73,6 +76,7 @@ namespace WorkBlock
 
             if (iniciaNuevoBloque)
             {
+                ReproducirAviso();
                 NotificarInicioBloque();
             }
 
@@ -222,9 +226,11 @@ namespace WorkBlock
             Close();
         }
 
-        private static void ReproducirAviso()
+        private void ReproducirAviso()
         {
-            SystemSounds.Exclamation.Play();
+            reproductorAudio.Stop();
+            reproductorAudio.Position = TimeSpan.Zero;
+            reproductorAudio.Play();
         }
 
         private void NotificarInicioBloque()
@@ -246,6 +252,7 @@ namespace WorkBlock
         private void MostrarNotificacion(string titulo, string mensaje)
         {
             AppNotification notification = new AppNotificationBuilder()
+                .MuteAudio()
                 .AddText(titulo)
                 .AddText(mensaje)
                 .BuildNotification();
